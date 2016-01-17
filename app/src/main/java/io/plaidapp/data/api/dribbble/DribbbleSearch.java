@@ -19,12 +19,14 @@ package io.plaidapp.data.api.dribbble;
 import android.support.annotation.StringDef;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
-
+import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-
+import io.plaidapp.data.api.dribbble.model.Images;
+import io.plaidapp.data.api.dribbble.model.Shot;
+import io.plaidapp.data.api.dribbble.model.User;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -39,10 +41,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import io.plaidapp.data.api.dribbble.model.Images;
-import io.plaidapp.data.api.dribbble.model.Shot;
-import io.plaidapp.data.api.dribbble.model.User;
 
 /**
  * Dribbble API does not have a search endpoint so we have to do gross things :(
@@ -69,6 +67,7 @@ public class DribbbleSearch {
                 .addQueryParameter("per_page", "12")
                 .build();
         OkHttpClient client = new OkHttpClient();
+        client.networkInterceptors().add(new StethoInterceptor());
         Request request = new Request.Builder().url(url).build();
         try {
             Response response = client.newCall(request).execute();

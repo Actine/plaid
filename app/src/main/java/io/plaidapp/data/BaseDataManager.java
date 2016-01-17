@@ -17,13 +17,7 @@
 package io.plaidapp.data;
 
 import android.content.Context;
-
 import com.google.gson.GsonBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import io.plaidapp.BuildConfig;
 import io.plaidapp.data.api.AuthInterceptor;
 import io.plaidapp.data.api.ClientAuthInterceptor;
@@ -32,8 +26,13 @@ import io.plaidapp.data.api.dribbble.DribbbleService;
 import io.plaidapp.data.api.producthunt.ProductHuntService;
 import io.plaidapp.data.prefs.DesignerNewsPrefs;
 import io.plaidapp.data.prefs.DribbblePrefs;
+import io.plaidapp.util.StethoIntegratedClientFactory;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Base class for loading data.
@@ -99,6 +98,7 @@ public abstract class BaseDataManager implements
     private void createDesignerNewsApi() {
         designerNewsApi = new RestAdapter.Builder()
                 .setEndpoint(DesignerNewsService.ENDPOINT)
+                .setClient(StethoIntegratedClientFactory.makeClientForRetrofit())
                 .setRequestInterceptor(new ClientAuthInterceptor(designerNewsPrefs.getAccessToken(),
                         BuildConfig.DESIGNER_NEWS_CLIENT_ID))
                 .build()
@@ -115,6 +115,7 @@ public abstract class BaseDataManager implements
 
     private void createDribbbleApi() {
         dribbbleApi = new RestAdapter.Builder()
+                .setClient(StethoIntegratedClientFactory.makeClientForRetrofit())
                 .setEndpoint(DribbbleService.ENDPOINT)
                 .setConverter(new GsonConverter(new GsonBuilder()
                         .setDateFormat(DribbbleService.DATE_FORMAT)
@@ -134,6 +135,7 @@ public abstract class BaseDataManager implements
 
     private void createProductHuntApi() {
         productHuntApi = new RestAdapter.Builder()
+                .setClient(StethoIntegratedClientFactory.makeClientForRetrofit())
                 .setEndpoint(ProductHuntService.ENDPOINT)
                 .setRequestInterceptor(
                         new AuthInterceptor(BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
