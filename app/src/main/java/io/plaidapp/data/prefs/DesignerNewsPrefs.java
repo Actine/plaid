@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 
 import io.plaidapp.BuildConfig;
@@ -144,8 +145,8 @@ public class DesignerNewsPrefs {
 
     private void createApi() {
         final OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(
-                        new ClientAuthInterceptor(accessToken, BuildConfig.DESIGNER_NEWS_CLIENT_ID))
+                .addInterceptor(new ClientAuthInterceptor(accessToken, BuildConfig.DESIGNER_NEWS_CLIENT_ID))
+                .addNetworkInterceptor(new StethoInterceptor())
                 .build();
         final Gson gson = new Gson();
         api = new Retrofit.Builder()

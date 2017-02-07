@@ -18,13 +18,8 @@ package io.plaidapp.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import io.plaidapp.BuildConfig;
 import io.plaidapp.data.api.AuthInterceptor;
 import io.plaidapp.data.api.DenvelopingConverter;
@@ -38,6 +33,10 @@ import io.plaidapp.data.prefs.DribbblePrefs;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Base class for loading data; extending types are responsible for providing implementations of
@@ -152,8 +151,12 @@ public abstract class BaseDataManager<T> implements DataLoadingSubject {
     }
 
     private void createDribbbleSearchApi() {
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
         dribbbleSearchApi = new Retrofit.Builder()
                 .baseUrl(DribbbleSearchService.ENDPOINT)
+                .client(client)
                 .addConverterFactory(new DribbbleSearchConverter.Factory())
                 .build()
                 .create((DribbbleSearchService.class));
@@ -162,6 +165,7 @@ public abstract class BaseDataManager<T> implements DataLoadingSubject {
     private void createProductHuntApi() {
         final OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new AuthInterceptor(BuildConfig.PROCUCT_HUNT_DEVELOPER_TOKEN))
+                .addNetworkInterceptor(new StethoInterceptor())
                 .build();
         final Gson gson = new Gson();
         productHuntApi = new Retrofit.Builder()

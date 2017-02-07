@@ -37,6 +37,7 @@ import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import io.plaidapp.BuildConfig;
 import io.plaidapp.R;
 import io.plaidapp.data.api.dribbble.DribbbleAuthService;
@@ -47,6 +48,7 @@ import io.plaidapp.ui.transitions.FabTransform;
 import io.plaidapp.ui.transitions.MorphTransform;
 import io.plaidapp.util.ScrimUtil;
 import io.plaidapp.util.glide.CircleTransform;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -178,8 +180,12 @@ public class DribbbleLogin extends Activity {
     }
 
     private void getAccessToken(String code) {
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
         final DribbbleAuthService dribbbleAuthApi = new Retrofit.Builder()
                 .baseUrl(DribbbleAuthService.ENDPOINT)
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create((DribbbleAuthService.class));

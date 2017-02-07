@@ -21,14 +21,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.text.TextUtils;
-
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import io.plaidapp.BuildConfig;
 import io.plaidapp.data.api.AuthInterceptor;
 import io.plaidapp.data.api.DenvelopingConverter;
@@ -37,6 +32,10 @@ import io.plaidapp.data.api.dribbble.model.User;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Storing dribbble user state.
@@ -220,6 +219,7 @@ public class DribbblePrefs {
     private void createApi() {
         final OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new AuthInterceptor(getAccessToken()))
+                .addNetworkInterceptor(new StethoInterceptor())
                 .build();
         final Gson gson = new GsonBuilder()
                 .setDateFormat(DribbbleService.DATE_FORMAT)
