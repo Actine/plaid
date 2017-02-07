@@ -30,7 +30,8 @@ import okhttp3.OkHttpClient;
 import java.io.InputStream;
 
 /**
- * Configure Glide to set desired image quality.
+ * Configure Glide to set desired image quality and replace the default HTTPUrlConnection transport with Stetho-injected
+ * OkHTTP.
  */
 public class GlideConfiguration implements GlideModule {
 
